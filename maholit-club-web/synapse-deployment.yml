@@ -1,0 +1,56 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: synapse
+  namespace: maholit-club
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: synapse
+  template:
+    metadata:
+      labels:
+        app: synapse
+    spec:
+      containers:
+      - name: synapse
+        image: matrixdotorg/synapse:latest
+        resources:
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+          requests:
+            memory: "125Mi"
+            cpu: "250m"
+        env:
+          - name: SYNAPSE_CONFIG_PATH
+            value: "/app/homeserver.yaml"
+        ports:
+        - containerPort: 8008
+        volumeMounts:
+        - name: synapse-config
+          mountPath: /app
+        - name: synapse-log-config
+          mountPath: /log-config
+        - name: synapse-signing-key
+          mountPath: /signingkey
+        - name: synapse-media
+          mountPath: /media
+      volumes:
+        - name: synapse-config
+          secret:
+            secretName: synapse-secret-config
+        - name: synapse-signing-key
+          secret:
+            secretName: synapse-secret-signingkey
+        - name: synapse-log-config
+          configMap:
+            name: synapse-configmap-log-config
+            items:
+              - key: maholit.club.log.config
+                path: maholit.club.log.config
+        - name: synapse-media
+          persistentVolumeClaim:
+            claimName: synapse-media

@@ -1,0 +1,37 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: element
+  namespace: maholit-club-web
+spec:
+  selector:
+    matchLabels:
+      app: element
+  template:
+    metadata:
+      labels:
+        app: element
+    spec:
+      containers:
+      - name: element
+        image: vectorim/element-web:latest
+        resources:
+          limits:
+            memory: "175Mi"
+            cpu: "750m"
+          requests:
+            memory: "125Mi"
+            cpu: "250m"
+        volumeMounts:
+        - name: element-config
+          mountPath: /app
+        ports:
+        - containerPort: 80
+      volumes:
+        - name: element-config
+          configMap:
+            name: element-configmap-config
+            items:
+            - key: config
+              path: config.json
