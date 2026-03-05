@@ -1,2 +1,4 @@
 maholit-club-web/synapse-secret-config.yml
 maholit-club-web/synapse-secret-signingkey.yml
+external-dns/secret.yml
+cert-manager-issuers/secret.yml
